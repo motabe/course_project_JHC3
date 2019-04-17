@@ -1,0 +1,11 @@
+The dataset includes the following files:
+=========================================
+
+- 'X_train.txt' or 'X_test.txt': Training/test set.
+	- Triaxial acceleration from the accelerometer (total acceleration) and the estimated body acceleration in standard gravity units 'g'.
+	- Triaxial Angular velocity from the gyroscope, measured by the gyroscope for each window sample. The units are radians/second. 
+	- In the columns one will fin the 561-feature vector with time and frequency domain variables. 
+
+- 'y_train.txt' or 'y_test.txt': Training/test labels.
+
+

@@ -1,0 +1,58 @@
+# README file of run_analysis.r file
+## Peer-graded Assignment: Getting and Cleaning Data Course Project
+### by Bernardo Mota
+
+**run_analysis.r is divided into 8 sections, namely:**  
+1. Part of the code that reads the general info about the data  
+2. Part of the code that reads the test data  
+3. Part of the code that reads the training data  
+4. Answer to question 1:
+The following code merges test and train data
+```
+datamerged <- tibble::as_tibble(rbind(test, train))
+```
+5. Answer to question 2:  
+The following code extracts only the mean and the standard deviation for each measurement
+```
+columns       <- grep("mean|std", features[,2]) + 2
+newdatamerged <- datamerged[,c(1, 2, columns)]
+```
+6. Answer to question 3:
+The following code relates two tables to make use of descriptive activity to name the activities in the data set
+```
+library(tidyverse)
+
+names(activity_labels) <- c("activity_id","activity")
+newdatamerged <- newdatamerged %>% 
+  left_join(activity_labels, by = "activity_id") %>%
+  select(activity, everything(), -activity_id)
+```
+7. Answer to question 4:
+The following code appropriately labels the data set with descriptive variable names
+```
+rows           <- grep("mean|std", features[,2])
+variablesnames <- as.character(features[rows,2])
+variablesnames <- gsub('\\(\\)',"", variablesnames)
+variablesnames <- gsub('-',"", variablesnames)
+variablesnames <- gsub('X',"Xaxis", variablesnames)
+variablesnames <- gsub('Y',"Yaxis", variablesnames)
+variablesnames <- gsub('Z',"Zaxis", variablesnames)
+
+names(newdatamerged) <- c(names(newdatamerged)[1:2], variablesnames)
+```
+8. Answer to question 5:
+The following code creates a tidy data set with the average of each variable for each activity and each subject
+```
+library(tidyverse)
+
+newdatamerged <- newdatamerged %>% gather(names(newdatamerged)[-c(1,2)], key = "variables", value = "value")
+
+newdatamerged <- newdatamerged %>%
+  group_by(activity, subject, variables) %>%
+  summarise(average = mean(value, na.rm = TRUE)) %>%
+  select(variables, activity, subject, average) %>%
+  arrange(variables, activity, subject)
+  
+write.table(newdatamerged, "dataQuestion5.txt", row.name=FALSE)
+```
+
